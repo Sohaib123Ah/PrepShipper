@@ -5,6 +5,9 @@ const app = express();
 config.config({ path: "./config/config.env" });
 const cookieParser = require("cookie-parser");
 const path = require("path");
+const mongoConnection = require("./database/db");
+
+mongoConnection();
 
 // Use Middlewares
 app.use(express.json());
@@ -23,5 +26,9 @@ app.use("/api/v1", user);
 
 // Error Middleware
 app.use(error);
+
+app.listen(process.env.PORT, () => {
+  console.log(`http://localhost:${process.env.PORT}`);
+});
 
 module.exports = app;
