@@ -33,21 +33,14 @@ exports.SendOtp = catchAsyncErrors(async (req, res, next) => {
   try {
     await sendEmail(email, "OTP Verification", message);
 
-    // res.status(200).json({
-    //   success: true,
-    //message:`opt send to ${email}`
-    //   hash,
-    // });
+    res.status(200).json({
+      success: true,
+      hash,
+      message: `The verification otp has been sent to ${email}`,
+    });
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));
   }
-
-  res.status(200).json({
-    success: true,
-    hash,
-    message: `The verification otp has been sent to ${email}`,
-    otp,
-  });
 });
 
 // User Register
@@ -67,8 +60,6 @@ exports.RegisterAndOtpVerification = catchAsyncErrors(
       password,
       confirmPassword,
     } = req.body;
-
-    const myEmail = process.env.MY_EMAIL;
 
     const isExistEmail = await User.findOne({ email });
 
@@ -123,11 +114,6 @@ exports.RegisterAndOtpVerification = catchAsyncErrors(
       state,
       zipCode,
     });
-
-    if (myEmail === email) {
-      user.role = "admin";
-      await user.save();
-    }
 
     sendToken(res, 201, "Account Register SuccessFully", user);
   }
@@ -196,7 +182,9 @@ exports.ForgetPassword = catchAsyncErrors(async (req, res, next) => {
 
   await user.save();
 
-  const resetPasswordUrl = `http://localhost:3000/reset/password/${resetToken}`;
+  const resetPasswordUrl = `${req.protocol}://${req.get(
+    "host"
+  )}/reset/password/${resetToken}`;
 
   const message = `Your reset password token is :- \n\n ${resetPasswordUrl} \n\nIf you have not requested this email then, please ignore it.`;
 
@@ -236,6 +224,12 @@ exports.ResetPassword = catchAsyncErrors(async (req, res, next) => {
     );
   }
 
+  if (req.body.password.length < 8) {
+    return next(
+      new ErrorHandler("Password should be greater than 8 characters", 400)
+    );
+  }
+
   if (req.body.password !== req.body.confirmPassword) {
     return next(new ErrorHandler("Password does not matched", 400));
   }
@@ -246,7 +240,10 @@ exports.ResetPassword = catchAsyncErrors(async (req, res, next) => {
 
   await user.save();
 
-  sendToken(res, 200, "Password Reset SuccessFully", user);
+  res.status(200).json({
+    success: true,
+    message: "Password Reset SuccessFully",
+  });
 });
 
 // Change Name
