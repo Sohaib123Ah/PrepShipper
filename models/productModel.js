@@ -56,6 +56,10 @@ const productSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  payment: {
+    type: String,
+    default: "NO"
+  },
   deliveredAt: {
     type: Date,
   },

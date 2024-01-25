@@ -4,6 +4,7 @@ const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const fs = require("fs");
 const pdfkit = require("pdfkit");
 const path = require("path");
+const stripe = require("stripe")(process.env.STRIPE_SEC_KEY)
 
 exports.createProduct = catchAsyncErrors(async (req, res, next) => {
   const {
@@ -224,7 +225,7 @@ exports.generateInvoice = catchAsyncErrors(async (req, res, next) => {
 });
 
 exports.userProducts = catchAsyncErrors(async (req, res, next) => {
-  const products = await Product.find({ user: req.user.id });
+  const products = await Product.find({ user: req.user.id }).sort({ _id: -1 });
 
   res.status(200).json({
     success: true,
@@ -239,4 +240,50 @@ exports.singleProduct = catchAsyncErrors(async (req, res, next) => {
     success: true,
     product,
   });
+});
+
+exports.createPayment = catchAsyncErrors(async (req, res, next) => {
+  const id = req.body.id;
+
+  const product = await Product.findById({ _id: id });
+
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ["card"],
+    line_items: [
+      {
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: product.name
+          },
+          unit_amount: product.price * 100
+        },
+        quantity: 1
+      },
+    ],
+    mode: "payment",
+    success_url: `${process.env.URL}/payment/success`,
+    cancel_url: `${process.env.URL}/payment/cancel`,
+  });
+
+  res.status(200).json({
+    success: true,
+    id: session.id,
+    url: session.url,
+  });
+
+});
+
+exports.paymentStatus = catchAsyncErrors(async (req, res, next) => {
+  const id = req.body.id;
+
+  const product = await Product.findById({ _id: id });
+
+  product.payment = "YES";
+  await product.save();
+
+  res.status(200).json({
+    success: true
+  });
+
 });

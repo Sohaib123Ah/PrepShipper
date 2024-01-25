@@ -1,0 +1,40 @@
+ssl_certificate /etc/nginx/ssl-certificates/www.prepshipper.com.crt;
+    ssl_certificate_key /etc/nginx/ssl-certificates/www.prepshipper.com.key;
+
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+
+
+ssl_certificate /etc/letsencrypt/live/prepshipper.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/prepshipper.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+
+mongodb+srv://Sohaib:iamaProgramer1234@cluster0.ihdeazr.mongodb.net/PrepShipper?retryWrites=true&w=majority
+
+
+
+const mongoose = require("mongoose");
+
+const mongooseConction = () => {
+  mongoose
+    .connect(process.env.DB_URL)
+    .then(() => {
+      console.log("Connected to MongoDB");
+    })
+    .catch((error) => {
+      console.error("Error connecting to MongoDB: ", error);
+    });
+};
+
+module.exports = mongooseConction;
+
+
+db.users.updateOne(
+   { "_id": ObjectId("65b16b6bf2d38827cc176acc") },
+   {
+     $set: { "role": "admin" }
+   }
+)

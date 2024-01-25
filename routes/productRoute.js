@@ -4,6 +4,8 @@ const {
   userProducts,
   generateInvoice,
   singleProduct,
+  createPayment,
+  paymentStatus,
 } = require("../controllers/productController");
 const uploadHandler = require("../middlewares/multiMulter");
 const { authenticated } = require("../middlewares/userAuth");
@@ -25,5 +27,9 @@ route.get("/user/products", authenticated, userProducts);
 route.post("/generate/invoice/:id", authenticated, generateInvoice);
 
 route.get("/single/product/:id", authenticated, singleProduct);
+
+route.post("/pay", authenticated, createPayment);
+
+route.post("/payment-status", authenticated, paymentStatus);
 
 module.exports = route;

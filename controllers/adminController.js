@@ -62,7 +62,7 @@ exports.adminDeleteUser = catchAsyncErrors(async (req, res, next) => {
 });
 
 exports.adminAllProducts = catchAsyncErrors(async (req, res, next) => {
-  const products = await Product.find({});
+  const products = await Product.find({}).sort({ _id: -1 });
 
   res.status(200).json({
     success: true,
@@ -139,7 +139,7 @@ exports.adminDeleteProduct = catchAsyncErrors(async (req, res, next) => {
 });
 
 exports.adminUserProducts = catchAsyncErrors(async (req, res, next) => {
-  const products = await Product.find({ user: req.params.id });
+  const products = await Product.find({ user: req.params.id }).sort({ _id: -1 });
 
   res.status(200).json({
     success: true,
@@ -148,7 +148,7 @@ exports.adminUserProducts = catchAsyncErrors(async (req, res, next) => {
 });
 
 exports.adminPickProducts = catchAsyncErrors(async (req, res, next) => {
-  const products = await Product.find({ status: "Pick" });
+  const products = await Product.find({ status: "Pick" }).sort({ _id: -1 });
 
   res.status(200).json({
     success: true,
@@ -157,7 +157,7 @@ exports.adminPickProducts = catchAsyncErrors(async (req, res, next) => {
 });
 
 exports.adminPackProducts = catchAsyncErrors(async (req, res, next) => {
-  const products = await Product.find({ status: "Pack" });
+  const products = await Product.find({ status: "Pack" }).sort({ _id: -1 });
 
   res.status(200).json({
     success: true,
@@ -166,7 +166,7 @@ exports.adminPackProducts = catchAsyncErrors(async (req, res, next) => {
 });
 
 exports.adminDeliveredProducts = catchAsyncErrors(async (req, res, next) => {
-  const products = await Product.find({ status: "Delivered" });
+  const products = await Product.find({ status: "Delivered" }).sort({ _id: -1 });
 
   res.status(200).json({
     success: true,
@@ -175,7 +175,7 @@ exports.adminDeliveredProducts = catchAsyncErrors(async (req, res, next) => {
 });
 
 exports.adminProcessingProducts = catchAsyncErrors(async (req, res, next) => {
-  const products = await Product.find({ status: "Processing" });
+  const products = await Product.find({ status: "Processing" }).sort({ _id: -1 });
 
   res.status(200).json({
     success: true,
